@@ -45,7 +45,7 @@ class AutoRun:
 
     @staticmethod
     def do(boy):
-        boy.x -= 1
+        boy.x -= 10
         boy.frame = (boy.frame + 1) % 8
 
         if (get_time() - boy.a_up_time > 5):
@@ -53,7 +53,7 @@ class AutoRun:
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y + 30, 200, 200)
 
 
 class StateMachine:
