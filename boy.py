@@ -1,6 +1,5 @@
 from pico2d import *
 
-# 2. 자동 무적 런 상태에서 5초 이상 경과했을 때 IDLE 상태로 돌아가는 것을 구현한다.
 # 3. 캐릭터의 속도와 크기를 증가시키고, 화면의 좌우측 끝에서 자동으로 방향 전환하는 것을 구현한다.
 
 
@@ -17,6 +16,8 @@ class Idle:
     @staticmethod
     def enter(boy, event):
         print("Enter Idle")
+        boy.x, boy.y = 400, 90
+        boy.action = 3
 
     @staticmethod
     def exit(boy):
