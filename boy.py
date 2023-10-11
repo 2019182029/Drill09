@@ -10,6 +10,10 @@ def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
 
+def a_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
+
+
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
@@ -18,11 +22,11 @@ class Idle:
 
     @staticmethod
     def enter(boy):
-        pass
+        print("Enter Idle")
 
     @staticmethod
-    def exit(boy, event):
-        pass
+    def exit(boy):
+        print("Exit Idle")
 
     @staticmethod
     def do(boy):
@@ -34,14 +38,31 @@ class Idle:
 
 
 class AutoRun:
-    pass
+    @staticmethod
+    def enter(boy):
+        print("Enter AutoRun")
+
+    @staticmethod
+    def exit(boy):
+        print("Exit AutoRun")
+
+    @staticmethod
+    def do(boy):
+        print("Do AutoRun")
+
+    @staticmethod
+    def draw(boy):
+        pass
 
 
 class StateMachine:
     def __init__(self, boy):
         self.boy = boy
         self.cur_state = Idle
-        self.transition = {}
+        self.transition = {
+            Idle: {a_down: AutoRun},
+            AutoRun: {a_up: Idle}
+        }
 
     def start(self):
         self.cur_state.enter(self.boy)
@@ -53,14 +74,14 @@ class StateMachine:
         self.cur_state.draw(self.boy)
 
     def handle_event(self, event):
-        # for check_event, next_state in self.transition[self.cur_state].items():
-        #     if check_event(event):
-        #         self.cur_state.exit(self.boy, event)
-        #         self.cur_state = next_state
-        #         self.cur_state.enter(self.boy, event)
-        #         return True
-        # return False
-        pass
+        for check_event, next_state in self.transition[self.cur_state].items():
+            if check_event(event):
+                self.cur_state.exit(self.boy)
+                self.cur_state = next_state
+                self.cur_state.enter(self.boy)
+                return True
+        return False
+
 
 class Boy:
     def __init__(self):
