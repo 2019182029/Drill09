@@ -1,7 +1,5 @@
 from pico2d import *
 
-# 3. 캐릭터의 속도와 크기를 증가시키고, 화면의 좌우측 끝에서 자동으로 방향 전환하는 것을 구현한다.
-
 
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
@@ -38,6 +36,7 @@ class AutoRun:
         print("Enter AutoRun")
         boy.a_up_time = get_time()
         boy.action = 0
+        boy.dir = -10
 
     @staticmethod
     def exit(boy):
@@ -45,7 +44,14 @@ class AutoRun:
 
     @staticmethod
     def do(boy):
-        boy.x -= 10
+        if (boy.x < 50 or boy.x > 750):
+            boy.dir *= -1
+        if (boy.x < 50):
+            boy.action = 1
+        elif (boy.x > 750):
+            boy.action = 0
+        boy.x += boy.dir
+
         boy.frame = (boy.frame + 1) % 8
 
         if (get_time() - boy.a_up_time > 5):
