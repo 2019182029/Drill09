@@ -41,6 +41,7 @@ class AutoRun:
     @staticmethod
     def enter(boy):
         print("Enter AutoRun")
+        boy.action = 0
 
     @staticmethod
     def exit(boy):
@@ -48,11 +49,12 @@ class AutoRun:
 
     @staticmethod
     def do(boy):
-        print("Do AutoRun")
+        boy.x -= 1
+        boy.frame = (boy.frame + 1) % 8
 
     @staticmethod
     def draw(boy):
-        pass
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
 
 
 class StateMachine:
