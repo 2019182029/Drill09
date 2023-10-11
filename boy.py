@@ -1,17 +1,11 @@
 from pico2d import *
 
-
-# 1. AutoRun 클래스를 추가하여 'a'키를 눌렀을 때 키 조작 없이도 캐릭터가 움직이는 것을 구현한다.
 # 2. 자동 무적 런 상태에서 5초 이상 경과했을 때 IDLE 상태로 돌아가는 것을 구현한다.
 # 3. 캐릭터의 속도와 크기를 증가시키고, 화면의 좌우측 끝에서 자동으로 방향 전환하는 것을 구현한다.
 
 
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
-
-
-def a_up(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
 
 
 def time_out(e):
@@ -21,7 +15,7 @@ def time_out(e):
 class Idle:
 
     @staticmethod
-    def enter(boy):
+    def enter(boy, event):
         print("Enter Idle")
 
     @staticmethod
@@ -39,8 +33,9 @@ class Idle:
 
 class AutoRun:
     @staticmethod
-    def enter(boy):
+    def enter(boy, event):
         print("Enter AutoRun")
+        boy.a_up_time = get_time()
         boy.action = 0
 
     @staticmethod
@@ -51,6 +46,9 @@ class AutoRun:
     def do(boy):
         boy.x -= 1
         boy.frame = (boy.frame + 1) % 8
+
+        if (get_time() - boy.a_up_time > 5):
+            boy.state_machine.handle_event(('TIME_OUT', 0))
 
     @staticmethod
     def draw(boy):
@@ -63,11 +61,11 @@ class StateMachine:
         self.cur_state = Idle
         self.transition = {
             Idle: {a_down: AutoRun},
-            AutoRun: {a_up: Idle}
+            AutoRun: {time_out: Idle}
         }
 
     def start(self):
-        self.cur_state.enter(self.boy)
+        self.cur_state.enter(self.boy, ('None', 0))
 
     def update(self):
         self.cur_state.do(self.boy)
@@ -80,7 +78,7 @@ class StateMachine:
             if check_event(event):
                 self.cur_state.exit(self.boy)
                 self.cur_state = next_state
-                self.cur_state.enter(self.boy)
+                self.cur_state.enter(self.boy, event)
                 return True
         return False
 
